@@ -1,0 +1,21 @@
+{
+  "name": "short-link",
+  "version": "0.0.1",
+  "description": "create short-links",
+  "main": "index.js",
+  "ports": [9001],
+  "scripts": {
+    "test": "node_modules/mocha/bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robojones/short-link.git"
+  },
+  "author": "robojones",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/robojones/short-link/issues"
+  },
+  "homepage": "https://github.com/robojones/short-link#readme",
+  "dependencies": {}
+}
