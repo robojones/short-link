@@ -3,7 +3,9 @@
   "version": "0.0.1",
   "description": "create short-links",
   "main": "index.js",
-  "ports": [9001],
+  "ports": [
+    9001
+  ],
   "scripts": {
     "test": "node_modules/mocha/bin/mocha"
   },
@@ -17,5 +19,8 @@
     "url": "https://github.com/robojones/short-link/issues"
   },
   "homepage": "https://github.com/robojones/short-link#readme",
-  "dependencies": {}
+  "dependencies": {
+    "express": "^4.14.1",
+    "marko": "^4.0.0-rc.23"
+  }
 }
