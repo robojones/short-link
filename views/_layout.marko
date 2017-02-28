@@ -2,9 +2,25 @@
 
 <html>
   <head>
-    <title if(data.title)><include(data.title)/></title>
-    <title else>hallo</title>
+    <title>2short.io</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <include(data.head)></include>
+    <style>
+      html, body {
+        width: 100%;
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        display: flex;
+
+        font-family: 'Roboto', sans-serif;
+        font-size: 13px;
+        color: #444;
+
+        background-color: #fafafa;
+      }
+    </style>
   </head>
   <body>
     <include(data.body)/>

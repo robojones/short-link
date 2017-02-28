@@ -2,36 +2,147 @@
   <@head>
     <script src="//cdnjs.cloudflare.com/ajax/libs/SVG-Morpheus/0.3.2/svg-morpheus.js"></script>
     <style>
-      html, body {
-        width: 100%;
-        height: 100%;
+      .frame {
+        width: 30em;
+        margin: auto;
+        padding: 1em;
       }
-      body {
-        margin: 0;
-        display: flex;
-        background: linear-gradient(to left, #ECE9E6 , #FFFFFF);
+      .content:first-child {
+        padding: 4em 1em 3em 1em;
       }
       .content {
-        margin: auto;
-        background-color: #ddd;
-        padding: 1em;
+        padding: 3em 1em 1em 1em;
+        background-color: #fff;
+        border: .1em solid #ebebeb;
+        position: relative;
+        opacity: 1;
+
+        transition: opacity .5s;
+      }
+      .content.hidden {
+        opacity: 0;
+      }
+      header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+
+        background-color: #0ad;
+      }
+      header>a {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        border-left: .5em solid transparent;
+
+        font-size: 1.5em;
+        line-height: 2em;
+        text-decoration: none;
+        text-align: center;
+        color: #fff;
+      }
+      header.back>a {
+        background: no-repeat left url("/static/arrow-back.svg");
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.4em;
+        font-weight: inherit;
+        color: #aaa;
+      }
+      input {
+        outline: none;
+      }
+      input[type=button]::-moz-focus-inner {
+        border: 0;
       }
       input[type=url] {
         width: 100%;
+        box-sizing: border-box;
+        padding: 1em;
+
+        font-size: 1em;
+        line-height: 1em;
+        margin: 1em 0;
+
+        border: .1em solid #ebebeb;
+        box-shadow: 0 .2em .4em 0 #dfdfdf;
+
+        transition: box-shadow .2s;
+      }
+      input[type=url]:not([disabled]):hover, input[type=url]:focus {
+        box-shadow: 0 .2em .5em .1em #ddd;
+      }
+      .submit {
+        width: 50%;
+
+        position: absolute;
+        left: 0;
+        bottom: 0;
+      }
+      input[type=button] {
+        width: 4em;
+        height: 4em;
+
+        z-index: 2;
+        position: absolute;
+        right: -2em;
+        bottom: -2em;
+
+        border: none;
+        border-radius: 50%;
+        color: #fff;
+        box-shadow: 0 0.2em 0.6em 0 #afafaf;
+        background: no-repeat center url("/static/arrow-forward.svg") #0ad;
+
+        transition: box-shadow .2s, transform .2s;
+      }
+      input[type=button]:not([disabled]):hover, input[type=button]:focus {
+        box-shadow: 0 0.3em 0.8em 0 #aaa;
+        background-color: #1ac;
+      }
+      input[type=button][disabled] {
+        background-color: #aaa;
+        box-shadow: 0.2em 0 0.6em 0 #afafaf;
+        transform: rotate(90deg);
       }
     </style>
   </@head>
   <@body>
-    <div class="content">
-      <h1>2short.io</h1>
-      <form id="input">
-        <p>Insert a link</p>
-        <input type="url" placeholder="https://duckduckgo.com/?q=hello+world"/>
-        <input type="submit" value=">"/>
-      </form>
-      <div id="result">
-        <input type="url" value=data.link contenteditable=false/>
+    <div class="frame">
+      <div class="content">
+        <header>
+          <a href="/">2short.io</a>
+        </header>
+        <h1>Insert a link</h1>
+        <input id="link" type="url" autofocus/>
+        <div class="submit">
+          <input id="send" type="button" value=""/>
+        </div>
+      </div>
+      <div id="result" class="content hidden">
+        <h1>Your short-link</h1>
+        <input type="url" value="2short.io/a4"/>
       </div>
     </div>
+    <script>
+      var header = document.getElementsByTagName('header')[0]
+      var result = document.getElementById('result')
+      var link = document.getElementById('link')
+      var button = document.getElementById('send')
+
+      // init for stupid firefox
+      link.disabled = false
+      button.disabled = false
+
+      button.addEventListener('click', function (ev, a, b) {
+        console.log(ev, a, b)
+        header.classList.add('back')
+        result.classList.remove('hidden')
+        link.disabled = true
+        button.disabled = true
+      })
+    </script>
   </@body>
 </include>

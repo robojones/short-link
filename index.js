@@ -7,19 +7,7 @@ app.set('views', 'views')
 
 app.use(marko)
 
-// app.use((req, res, next) => {
-//   const views = path.resolve(app.get('views'))
-//
-//   res.render = (view, locals = {}, callback = res) => {
-//     const template = path.join(views, view)
-//     if(process.env.NODE_ENV === 'development') {
-//       delete require.cache[require.resolve(template)]
-//     }
-//     require(template).render(locals, callback)
-//   }
-//
-//   next()
-// })
+app.use('/static', express.static('public'))
 
 app.get('/', (req, res, next) => {
   res.render('index', {
