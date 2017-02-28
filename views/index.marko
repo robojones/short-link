@@ -48,7 +48,8 @@
         display: block;
         width: 100%;
         box-sizing: border-box;
-        border-left: .5em solid transparent;
+        border-left: .5em solid rgba(0, 0, 0, 0);
+        padding-right: .5em;
 
         font-size: 1.5em;
         line-height: 2em;
@@ -132,7 +133,7 @@
         </header>
         <h1>Insert a link</h1>
         <form>
-          <input id="link" type="text" autofocus/>
+          <input id="link" type="text" autofocus="true"/>
           <div class="submit">
             <input id="send" type="submit" value=""/>
           </div>
@@ -140,7 +141,7 @@
       </div>
       <div id="result" class="content hidden">
         <h1>Your short-link</h1>
-        <input id="short" type="text" value="2short.io/a4"/>
+        <input id="short" type="text" value=data.link readonly="true"/>
       </div>
     </div>
     <script>
@@ -167,6 +168,7 @@
           link.disabled = true
           submit.disabled = true
           short.select()
+          send(link.value)
         })
 
         var timeout = null
@@ -177,6 +179,22 @@
           timeout = setTimeout(function () {
             message.classList.add('hidden')
           }, 2000)
+        }
+
+        function send(link) {
+          xhr = new XMLHttpRequest()
+          var url = short.value + '/set'
+          xhr.open('POST', url, true)
+          xhr.setRequestHeader('Content-type', 'application/json')
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status !== 200) {
+              error('Link not created. Try again!')
+            }
+          }
+          var data = JSON.stringify({
+            link: link
+          })
+          xhr.send(data)
         }
       })()
     </script>
