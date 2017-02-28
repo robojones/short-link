@@ -2,6 +2,20 @@
   <@head>
     <script src="//cdnjs.cloudflare.com/ajax/libs/SVG-Morpheus/0.3.2/svg-morpheus.js"></script>
     <style>
+      #message {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+
+        font-size: 1.5em;
+        line-height: 2em;
+        text-align: center;
+        color: #fff;
+        background-color: #f88;
+
+        transition: opacity 1s;
+      }
       .frame {
         width: 30em;
         margin: auto;
@@ -19,7 +33,7 @@
 
         transition: opacity .5s;
       }
-      .content.hidden {
+      .hidden {
         opacity: 0;
       }
       header {
@@ -54,10 +68,10 @@
       input {
         outline: none;
       }
-      input[type=button]::-moz-focus-inner {
+      input[type=submit]::-moz-focus-inner {
         border: 0;
       }
-      input[type=url] {
+      input[type=text] {
         width: 100%;
         box-sizing: border-box;
         padding: 1em;
@@ -71,7 +85,7 @@
 
         transition: box-shadow .2s;
       }
-      input[type=url]:not([disabled]):hover, input[type=url]:focus {
+      input[type=text]:not([disabled]):hover, input[type=text]:focus {
         box-shadow: 0 .2em .5em .1em #ddd;
       }
       .submit {
@@ -81,7 +95,7 @@
         left: 0;
         bottom: 0;
       }
-      input[type=button] {
+      input[type=submit] {
         width: 4em;
         height: 4em;
 
@@ -98,11 +112,11 @@
 
         transition: box-shadow .2s, transform .2s;
       }
-      input[type=button]:not([disabled]):hover, input[type=button]:focus {
+      input[type=submit]:not([disabled]):hover, input[type=submit]:focus {
         box-shadow: 0 0.3em 0.8em 0 #aaa;
         background-color: #1ac;
       }
-      input[type=button][disabled] {
+      input[type=submit][disabled] {
         background-color: #aaa;
         box-shadow: 0.2em 0 0.6em 0 #afafaf;
         transform: rotate(90deg);
@@ -110,39 +124,61 @@
     </style>
   </@head>
   <@body>
+    <div id="message" class="hidden">This is an error.</div>
     <div class="frame">
       <div class="content">
         <header>
           <a href="/">2short.io</a>
         </header>
         <h1>Insert a link</h1>
-        <input id="link" type="url" autofocus/>
-        <div class="submit">
-          <input id="send" type="button" value=""/>
-        </div>
+        <form>
+          <input id="link" type="text" autofocus/>
+          <div class="submit">
+            <input id="send" type="submit" value=""/>
+          </div>
+        </form>
       </div>
       <div id="result" class="content hidden">
         <h1>Your short-link</h1>
-        <input type="url" value="2short.io/a4"/>
+        <input id="short" type="text" value="2short.io/a4"/>
       </div>
     </div>
     <script>
-      var header = document.getElementsByTagName('header')[0]
-      var result = document.getElementById('result')
-      var link = document.getElementById('link')
-      var button = document.getElementById('send')
+      (function () {
+        var header = document.getElementsByTagName('header')[0]
+        var result = document.getElementById('result')
+        var link = document.getElementById('link')
+        var submit = document.getElementById('send')
+        var short = document.getElementById('short')
+        var message = document.getElementById('message')
+        var url = /^(?:https?:\/\/)?\w+\.\w+\/?.*$/m;
 
-      // init for stupid firefox
-      link.disabled = false
-      button.disabled = false
+        link.disabled = false
+        submit.disabled = false
 
-      button.addEventListener('click', function (ev, a, b) {
-        console.log(ev, a, b)
-        header.classList.add('back')
-        result.classList.remove('hidden')
-        link.disabled = true
-        button.disabled = true
-      })
+        submit.addEventListener('click', function (ev) {
+          ev.preventDefault()
+          if(!url.exec(link.value)) {
+            error('Input is not a link!')
+            return
+          }
+          header.classList.add('back')
+          result.classList.remove('hidden')
+          link.disabled = true
+          submit.disabled = true
+          short.select()
+        })
+
+        var timeout = null
+        function error(err) {
+          clearTimeout(timeout)
+          message.innerHTML = err;
+          message.classList.remove('hidden')
+          timeout = setTimeout(function () {
+            message.classList.add('hidden')
+          }, 2000)
+        }
+      })()
     </script>
   </@body>
 </include>
