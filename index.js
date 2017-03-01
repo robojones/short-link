@@ -65,7 +65,6 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
           }
         })
       }).then(r => {
-        console.log(r)
         if(!r || !r.result.nModified) { // not modified
           return
         }
@@ -123,7 +122,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
       })
 
       res.render('index', {
-        link: 'http://localhost:8080/' + idString
+        link: 'http://huhn:8080/' + idString
       })
     }).catch(err => {
       next(err)
@@ -155,10 +154,17 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
     const key = req.cookies['short:' + req.params.id]
 
     if(!key) {
-      console.log('no key', key)
+      console.log('no key')
       res.status(403).send('Forbidden')
       return
     }
+    console.log({
+      _id: req.idNumber,
+      key: key,
+      expire: {
+        $gt: Date.now()
+      }
+    })
     db.collection('links').update({
       _id: req.idNumber,
       key: key,
@@ -170,8 +176,10 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
         link: req.body.link
       }
     }).then(stats => {
+      console.log('done')
       res.status(200).send('')
     }).catch(err => {
+      console.log(err)
       next(err)
     })
     console.log('req.body', req.body)
@@ -190,20 +198,13 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
       return
     }
 
-    console.log('idNumber:', req.idNumber)
-    console.log('query:', {
-      id: req.idNumber,
-      expire: {
-        $gt: Date.now()
-      }
-    })
     db.collection('links').find({
       _id: req.idNumber,
       expire: {
         $gt: Date.now()
       }
     }).limit(1).next().then(data => {
-      console.log(data)
+
       if(!data || !data.link) {
         next()
         return
