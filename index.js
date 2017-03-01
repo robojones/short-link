@@ -11,7 +11,8 @@ const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 
 const reg = /^(?:https?:\/\/)?[^\/]+\.\w+\/?.*$/m
-const MONTH = 1000 * 60 * 60 * 24 * 30
+const DAY = 1000 * 60 * 60 * 24
+const MONTH = DAY * 30
 
 MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
   if(err) {
@@ -41,11 +42,6 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
   app.use(bodyParser.json())
 
   app.get('/', (req, res, next) => {
-    // 1. find
-    // 2. try to insert (error -> 1.)
-    // 3. increment
-
-    // important: when overwriting old use $lt{expire: Date.now()}
 
     const key = crypto.randomBytes(128).toString('hex')
 
@@ -62,7 +58,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
           $set: {
             key: key,
             link: null,
-            expire: Date.now() + MONTH
+            expire: Date.now() + DAY
           }
         })
       }).then(r => {
@@ -87,7 +83,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
           _id: idNumber,
           key: key,
           link: null,
-          expire: Date.now() + MONTH
+          expire: Date.now() + DAY
         }).then(stats => {
 
           return db.collection('links').update({ // increment
@@ -119,7 +115,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
       const idString = short.encode(idNumber)
 
       res.cookie('short:' + idString, key, {
-        maxAge: MONTH
+        maxAge: DAY
       })
 
       res.render('index', {
@@ -161,13 +157,6 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
       res.status(403).send('Forbidden')
       return
     }
-    console.log({
-      _id: req.idNumber,
-      key: key,
-      expire: {
-        $gt: Date.now()
-      }
-    })
     db.collection('links').update({
       _id: req.idNumber,
       key: key,
@@ -176,11 +165,12 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
       }
     }, {
       $set: {
-        link: link
+        link: link,
+        expire: Date.now() + MONTH
       }
     }).then(stats => {
       console.log('done')
-      res.status(200).send('')
+      res.status(200).send('ok')
     }).catch(err => {
       console.log(err)
       next(err)
@@ -190,14 +180,14 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
 
   app.get('/:id/', (req, res, next) => {
     const id = req.params.id
-    if(id.length > 16) {
+    if(id.length > 8) {
       next()
     }
 
     try {
       req.idNumber = short.decode(id)
     } catch(err) {
-      res.status(404).send('Not Found')
+      next()
       return
     }
 
