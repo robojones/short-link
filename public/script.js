@@ -13,7 +13,7 @@
   submit.addEventListener('click', function (ev) {
     ev.preventDefault()
     if(!reg.exec(link.value)) {
-      error('Input is not a link!')
+      error('Input is not a URL!')
       return
     }
     header.classList.add('back')
