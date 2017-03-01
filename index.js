@@ -10,6 +10,7 @@ const crypto = require('crypto')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 
+const reg = /^(?:https?:\/\/)?[^\/]+\.\w+\/?.*$/m
 const MONTH = 1000 * 60 * 60 * 24 * 30
 
 MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
@@ -142,13 +143,15 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
       return
     }
 
-    if(!req.body.link) {
+    let link = req.body.link
+
+    if(!link || !reg.exec(link.split('\n').shift())) {
       res.status(400).send('Bad Request')
       return
     }
 
-    if(!/https?:\/\/.*/.exec(req.body.link)) {
-      req.body.link = 'http://' + req.body.link
+    if(!/https?:\/\/.*/.exec(link)) {
+      link = 'http://' + link
     }
 
     const key = req.cookies['short:' + req.params.id]
@@ -173,7 +176,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
       }
     }, {
       $set: {
-        link: req.body.link
+        link: link
       }
     }).then(stats => {
       console.log('done')

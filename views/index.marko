@@ -154,14 +154,14 @@
         var submit = document.getElementById('send')
         var short = document.getElementById('short')
         var message = document.getElementById('message')
-        var url = /^(?:https?:\/\/)?\w+\.\w+\/?.*$/m;
+        var reg = /^(?:https?:\/\/)?[^\/]+\.\w+\/?.*$/m
 
         link.disabled = false
         submit.disabled = false
 
         submit.addEventListener('click', function (ev) {
           ev.preventDefault()
-          if(!url.exec(link.value)) {
+          if(!reg.exec(link.value)) {
             error('Input is not a link!')
             return
           }
