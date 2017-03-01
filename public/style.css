@@ -123,6 +123,8 @@ input[type=submit] {
   box-shadow: 0 0.2em 0.6em 0 #afafaf;
   background: no-repeat center url("/static/arrow-forward.svg") #0ad;
 
+  cursor: pointer;
+
   transition: box-shadow .2s, transform .2s, background-color .5s;
 }
 input[type=submit]:not([disabled]):hover, input[type=submit]:focus {
