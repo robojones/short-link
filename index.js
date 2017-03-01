@@ -118,10 +118,10 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
         maxAge: DAY
       })
 
-      let link = 'http://2short.io/' + idString
+      let link = '2short.io/' + idString
 
       if(process.env.NODE_ENV === 'development') {
-        link = `http://huhn:${process.env.PORT}/${idString}`
+        link = `huhn:${process.env.PORT}/${idString}`
       }
 
       res.render('index', {
