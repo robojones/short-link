@@ -27,7 +27,7 @@
       .content {
         padding: 3em 1em 1em 1em;
         background-color: #fff;
-        border: .1em solid #ebebeb;
+        border: .1em solid #e8e8e8;
         position: relative;
         opacity: 1;
 
@@ -64,7 +64,7 @@
         margin: 0;
         font-size: 1.4em;
         font-weight: inherit;
-        color: #aaa;
+        color: #949494;
       }
       input {
         outline: none;
@@ -82,14 +82,17 @@
         margin: 1em 0;
 
         border: .1em solid #ebebeb;
-        box-shadow: 0 .2em .4em 0 #dfdfdf;
+        box-shadow: 0 .2em .4em 0 #b9b9b9;
 
         cursor: text;
 
         transition: box-shadow .2s;
       }
       input[type=text]:not([disabled]):hover, input[type=text]:focus {
-        box-shadow: 0 .2em .5em .1em #ddd;
+        box-shadow: 0 .2em .5em .1em #b9b9b9;
+      }
+      input[type=text][disabled] {
+        background-color: #ececec;
       }
       .submit {
         width: 50%;
