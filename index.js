@@ -67,7 +67,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
         }
         return r._id
       }).catch(err => {
-        if(err.code !== 50 && err.code !== 11000) { // ignore timeout or duplicate
+        if(err.code !== 11000) { // ignore timeout or duplicate
           throw err
         }
       })
@@ -128,22 +128,21 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
 
   app.post('/:id/set', (req, res, next) => {
     const id = req.params.id
-    if(id.length > 16) {
-      next()
+    if(id.length > 8) {
+      return next()
     }
 
     try {
       req.idNumber = short.decode(id)
     } catch(err) {
       res.status(404).send('Not Found')
-      return
+      return next()
     }
 
     let link = req.body.link
 
     if(!link || !reg.exec(link.split('\n').shift())) {
-      res.status(400).send('Bad Request')
-      return
+      return res.status(400).send('Bad Request')
     }
 
     if(!/https?:\/\/.*/.exec(link)) {
@@ -154,9 +153,9 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
 
     if(!key) {
       console.log('no key')
-      res.status(403).send('Forbidden')
-      return
+      return res.status(403).send('Forbidden')
     }
+
     db.collection('links').update({
       _id: req.idNumber,
       key: key,
@@ -181,14 +180,13 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
   app.get('/:id/', (req, res, next) => {
     const id = req.params.id
     if(id.length > 8) {
-      next()
+      return next()
     }
 
     try {
       req.idNumber = short.decode(id)
     } catch(err) {
-      next()
-      return
+      return next()
     }
 
     db.collection('links').find({
@@ -199,8 +197,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
     }).limit(1).next().then(data => {
 
       if(!data || !data.link) {
-        next()
-        return
+        return next()
       }
 
       res.redirect(data.link)
