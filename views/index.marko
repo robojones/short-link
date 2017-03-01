@@ -188,8 +188,6 @@
           xhr.setRequestHeader('Content-type', 'application/json')
           xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status !== 200) {
-              alert(xhr.status + ' status:' + xhr.statusText + ' text:' + short.responseText)
-              alert(xhr)
               error('Link not created. Try again!')
             }
           }

@@ -118,8 +118,14 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
         maxAge: DAY
       })
 
+      let link = '2short.io/' + idString
+
+      if(process.env.NODE_ENV === 'development') {
+        link = `http://huhn:${process.env.PORT}/${idString}`
+      }
+
       res.render('index', {
-        link: 'http://huhn:8080/' + idString
+        link: link
       })
     }).catch(err => {
       next(err)
