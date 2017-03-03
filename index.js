@@ -43,7 +43,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
 
   app.get('/', (req, res, next) => {
 
-    const key = crypto.randomBytes(128).toString('hex')
+    const key = req.cookies['key'] || crypto.randomBytes(128).toString('hex')
 
     function getOldNumber() {
       return db.collection('links').find({
@@ -115,7 +115,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
 
       const idString = short.encode(idNumber)
 
-      res.cookie('short:' + idString, key, {
+      res.cookie('key', key, {
         maxAge: DAY
       })
 
@@ -156,7 +156,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
       link = 'http://' + link
     }
 
-    const key = req.cookies['short:' + req.params.id]
+    const key = req.cookies['key']
 
     if(!key) {
       console.log('no key')
