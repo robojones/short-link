@@ -60,12 +60,13 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
             link: null,
             expire: Date.now() + DAY
           }
+        }).then(r => {
+          if(!r || !r.result.nModified) { // not modified
+            return
+          }
+          console.log('got old link:', result._id)
+          return result._id
         })
-      }).then(r => {
-        if(!r || !r.result.nModified) { // not modified
-          return
-        }
-        return r._id
       }).catch(err => {
         if(err.code !== 11000) { // ignore timeout or duplicate
           throw err
@@ -180,7 +181,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
       console.log(err)
       next(err)
     })
-    console.log('req.body', req.body)
+    console.log(`set _id=${req.idNumber} to ${req.body.link}`)
   })
 
   app.get('/:id/', (req, res, next) => {
