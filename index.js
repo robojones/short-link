@@ -207,6 +207,12 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
         return next()
       }
 
+      db.collection('links').update({
+        $set: {
+          expire: Date.now() + MONTH
+        }
+      }).catch(err => {})
+
       res.redirect(data.link)
     }).catch(err => {
       next(err)
