@@ -54,7 +54,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
         if(!result) {
           return
         }
-        return db.collection('links').update(result, {
+        return db.collection('links').updateOne(result, {
           $set: {
             key: key,
             link: null,
@@ -87,7 +87,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
           expire: Date.now() + DAY
         }).then(stats => {
 
-          return db.collection('links').update({ // increment
+          return db.collection('links').updateOne({ // increment
             _id: 0
           }, {
             $inc: {
@@ -163,7 +163,7 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
       return res.status(403).send('Forbidden')
     }
 
-    db.collection('links').update({
+    db.collection('links').updateOne({
       _id: req.idNumber,
       key: key,
       expire: {
@@ -186,9 +186,6 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
 
   app.get('/:id/', (req, res, next) => {
     const id = req.params.id
-    if(id.length > 8) {
-      return next()
-    }
 
     try {
       req.idNumber = short.decode(id)
@@ -207,13 +204,20 @@ MongoClient.connect('mongodb://localhost:27017/short-link', (err, db) => {
         return next()
       }
 
-      db.collection('links').update({
+      res.redirect(data.link)
+
+      return db.collection('links').updateOne({
+        _id: data._id
+      }, {
         $set: {
           expire: Date.now() + MONTH
         }
-      }).catch(err => {})
+      }).then(stat => {
+        console.log('updated', data.id, stat)
+      }).catch(err => {
+        console.error(err)
+      })
 
-      res.redirect(data.link)
     }).catch(err => {
       next(err)
     })
