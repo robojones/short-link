@@ -1,6 +1,7 @@
 {
   "name": "short-link",
   "version": "0.0.1",
+  "private": true,
   "description": "create short-links",
   "main": "index.js",
   "ports": [
