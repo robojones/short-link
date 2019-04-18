@@ -37,7 +37,7 @@
 
   function send(link) {
     xhr = new XMLHttpRequest()
-    var url = 'http://' + short.value + '/set'
+    var url = 'https://' + short.value + '/set'
     xhr.open('POST', url, true)
     xhr.setRequestHeader('Content-type', 'application/json')
     xhr.onreadystatechange = function () {
