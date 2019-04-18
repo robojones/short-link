@@ -13,7 +13,7 @@
   submit.addEventListener('click', function (ev) {
     ev.preventDefault()
     if(!reg.exec(link.value)) {
-      error('Input is not a URL!')
+      error('Please enter a valid URL!')
       return
     }
     header.classList.add('back')
@@ -42,7 +42,7 @@
     xhr.setRequestHeader('Content-type', 'application/json')
     xhr.onreadystatechange = function () {
       if(xhr.readyState === 4 && xhr.status !== 200) {
-        error('Link not created. Try again!')
+        error('An error occured. Please try again!')
       }
     }
     var data = JSON.stringify({
